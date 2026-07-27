@@ -118,7 +118,10 @@ function App() {
 
     <section className="scene engineering-scene" data-node-id="73:485">
       <div className="split-head"><h2>ИНЖЕНЕРНАЯ<br/>СИСТЕМА</h2><p>FIXTILE MATRIX — это монолитная химически стойкая система защиты промышленного пола. Плитка работает не отдельно, а вместе с эпоксидной посадкой, армированием, затиркой и технологией виброукладки.</p></div>
-      <img src={`${A}edit-engineering.png`} alt="Применение FIXTILE MATRIX на объектах"/>
+      <div className="engineering-visual">
+        <img src={`${A}edit-engineering.png`} alt="Применение FIXTILE MATRIX на объектах"/>
+        <span>паркинги</span>
+      </div>
     </section>
 
     <section className="scene safety-scene" data-node-id="22:318">
