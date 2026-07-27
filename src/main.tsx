@@ -1,266 +1,132 @@
-import { FormEvent, useState } from "react";
 import { createRoot } from "react-dom/client";
 import "./styles.css";
 
 const A = `${import.meta.env.BASE_URL}assets/`;
 
-type SectionHeadProps = {
-  number: string;
-  label: string;
-  title: string;
-  intro?: string;
-  light?: boolean;
-};
+const specs = [
+  ["Толщина, мм", "от 8 до 18", "15", "запас прочности без лишней высоты пола", "оптимально для большинства задач"],
+  ["Водопоглощение, %, не более", "≤ 0,05", "0,02", "в 2,5 раза ниже предела ГОСТ", "высочайшая защита на все 25 лет"],
+  ["Предел прочности при изгибе, МПа", "≤ 35", "40", "на 14% выше нормы по изгибу", "для ударных и транспортных нагрузок"],
+  ["Износостойкость, г/см², не более", "≤ 0,18", "0,15", "на 17% ниже предела износа", "для зон движения техники и серьёзного абразива"],
+  ["Морозостойкость, циклы", "≥ 100", "100", "закрывает норму 100 и более циклов", "для холодных складов и переходных зон"],
+  ["Удельная активность радионуклидов, Бк/кг", "≤ 370", "115", "в 3,2 раза ниже предела", "без ограничений для промышленных объектов"],
+  ["Противоскольжение", "R10–R11", "R11", "верхний класс диапазона", "безопасность персонала на мокрых участках"],
+  ["Температурная стойкость", "термошок и >100°C", "соответствует", "подтверждён термошок >100°C", "для мойки паром и температурных перепадов"],
+  ["Размеры изделий", "по каталогу производителя", "соответствует", "соответствие каталожным размерам", "упрощает раскладку и расчёт материала"],
+  ["Допуск непараллельности кромок, мм", "0,5", "0,2", "в 2,5 раза точнее допуска", "ровнее укладка, меньше подрезки"],
+  ["Дефекты", "не допускаются повреждения", "соответствует", "соответствие без повреждений", "снижает риск брака и рекламаций"],
+  ["Кислотоупорность", "кислоты / щёлочи / масла", "ULA / HA", "максимальный класс химстойкости", "для кислотных и моечных зон"],
+];
 
-function SectionHead({ number, label, title, intro, light }: SectionHeadProps) {
-  return (
-    <header className={`section-head ${light ? "section-head--light" : ""}`}>
-      <div className="eyebrow"><span />РАЗДЕЛ {number} / {label}</div>
-      <div className="section-head__grid">
-        <h2>{title}</h2>
-        {intro && <p>{intro}</p>}
-      </div>
-    </header>
-  );
+const chemical = [
+  ["Кислоты и щёлочи", "разрушение покрытия и швов", "ULA / HA + эпоксидное поле", "химический щит без подплиточной коррозии"],
+  ["Масла и жиры", "скольжение, загрязнение, впитывание", "R11 + плотная керамика", "безопасное движение и проще санитарная мойка"],
+  ["Паровая мойка", "термошок, раскрытие швов", ">100°C + эпоксидная система", "мойка горячим паром без деградации покрытия"],
+  ["Вода и влажность", "водонасыщение и бактерии", "0,02% водопоглощение", "минимальное проникновение влаги и загрязнений"],
+  ["Дезинфектанты", "потеря поверхности и пятна", "неглазурованная плотная структура", "стойкость без обязательных пропиток"],
+  ["Погрузчики и тележки", "удары, истирание, вибрация", "15 мм + 40 МПа + 0,15 г/см²", "ресурс пола при постоянной нагрузке"],
+];
+
+const palette = [
+  ["Серый", "SG", "#afafaf", "Универсальный стандарт. Производства, склады", "нейтральная рабочая зона"],
+  ["Антрацит", "AN", "#282928", "Технические зоны, рампы, зоны масел", "контраст для грязных / масляных участков"],
+  ["Белый", "AW", "#fefefe", "«Чистые комнаты», фармацевтика, молочные цеха", "визуальный контроль загрязнений"],
+  ["Песочный", "AS", "#cdad88", "Пищевая промышленность, HoReCa", "тёплая безопасная зона для персонала"],
+  ["Терракот", "TR", "#b95330", "Опасные зоны, навигация, пути эвакуации", "сигнальный цвет ОТ и ТБ"],
+];
+
+const standards = [
+  ["Классификация керамики", "DIN EN 14411 / BIa логика", "плотность, тип материала, применимость", "высокоплотная промышленная керамика", "проектная спецификация"],
+  ["Водопоглощение", "EN ISO 10545-3", "пористость и влагостойкость", "0,02% / менее 0,05%", "таблица ТХ, тендерный критерий"],
+  ["Прочность при изгибе", "EN ISO 10545-4", "механический запас плитки", "40 МПа", "эксплуатационные нагрузки"],
+  ["Истираемость", "EN ISO 10545-6", "ресурс поверхности при абразиве", "0,15 г/см²", "склады, транспортные зоны"],
+  ["Морозостойкость", "EN ISO 10545-12", "100 циклов замораживания/оттаивания", "100+ циклов", "холодные и неотапливаемые зоны"],
+  ["Химическая устойчивость", "EN ISO 10545-13 / ULA / HA", "стойкость к агрессивным средам", "максимальный класс химстойкости", "кислотные, моечные, химические зоны"],
+  ["Пятностойкость / уборка", "EN ISO 10545-14 логика", "загрязнения, санитарная мойка", "плотная неглазурованная структура", "пищевая и фармацевтика"],
+  ["Монтажная система", "Техкарта MATRIX", "эпоксидное поле + виброукладка", "GLS400 / GLS500 + X-Bond", "ППР, ведомость работ"],
+  ["Документы поставки", "ТУ, сертификат, протокол", "проверяемость партии и поставщика", "российская юрисдикция", "44-ФЗ / 223-ФЗ / закупка"],
+];
+
+function DataTable({ headers, rows, icons = false, className = "" }: { headers: string[]; rows: string[][]; icons?: boolean; className?: string }) {
+  return <div className={`table-shell ${className}`}><table><thead><tr>{headers.map(h => <th key={h}>{h}</th>)}</tr></thead><tbody>{rows.map((r, i) => <tr key={r[0]}>{r.map((c, j) => <td key={j}>{icons && j === 0 && <img className="row-icon" src={`${A}${className.startsWith("spec") ? "spec" : "chem"}-${String(i + 1).padStart(2, "0")}.svg`} alt="" />}{c}</td>)}</tr>)}</tbody></table></div>;
 }
 
-const philosophy = [
-  ["01", "Нет подплиточных пустот", "Эпоксидное поле и виброукладка формируют жёсткую посадку плитки."],
-  ["02", "Химическая защита", "Система рассчитана на кислоты, щёлочи, воду, мойку и производственные нагрузки."],
-  ["03", "Тендерная логика", "Документы, ТУ, испытания и паспорта качества упрощают защиту решения."],
-];
-
-const specs = [
-  ["Толщина, мм", "от 8 до 18", "15", "Запас прочности без лишней высоты"],
-  ["Водопоглощение, не более", "0,05%", "0,02%", "В 2,5 раза ниже предела ГОСТ"],
-  ["Предел прочности при изгибе", "35 МПа", "40 МПа", "На 14% выше нормы"],
-  ["Износостойкость, не более", "0,18 г/см²", "0,15 г/см²", "Для зон движения техники"],
-  ["Морозостойкость", "100 циклов", "100 циклов", "Закрывает норму"],
-  ["Радиационная безопасность", "370 Бк/кг", "115 Бк/кг", "Класс 1, без ограничений"],
-  ["Противоскольжение", "R10–R11", "R11 / R12", "Для мокрых зон"],
-  ["Термостойкость", "Термошок", ">100°C", "Стабильность при перепадах"],
-  ["Химическая стойкость", "по EN 14411", "ULA / HA", "Кислоты и щёлочи"],
-];
-
-const install = [
-  ["01", "Основание", "Бетон ≥25 МПа, отрыв ≥1,5 МПа; чистое и обеспыленное"],
-  ["02", "Грунтовка GLS100", "Сплошной глянцевый слой без пор и матовых пятен"],
-  ["03", "GLS400 / GLS500", "Смола + отвердитель; рабочее время 30 / 45 минут"],
-  ["04", "Кварцевый песок", "0,3–0,6 мм; 3–7 кг песка на 1 кг смолы"],
-  ["05", "X-Bond", "Армирующая сетка с перекрытием полотен в клеевом слое"],
-  ["06", "Виброукладка", "Корректировки в течение 60 минут после нанесения"],
-  ["07", "Затирка", "Через 8–16 часов; затирочная машина"],
-];
-
-const documents = [
-  ["Техкарта MATRIX", "100×200×15 мм, R10/R11, <0,05%, термошок >100°C"],
-  ["Техкарта виброукладки", "GLS400/GLS500, X-Bond, кварцевый песок"],
-  ["FixTile X-Bond", "4×4 мм, 145–160 г/м², ≥1500 Н, pH 12–13"],
-  ["Сертификат соответствия", "РОСС RU.32001.04ИБФ1.ОСП28.97016"],
-  ["Протокол испытаний", "№90237-ПРГ/26 от 26.03.2026"],
-  ["Комплект для тендера", "ТУ, протокол, сертификат и система укладки"],
-];
-
-const tenderRows = [
-  ["ТУ", "23.31.10-001-33035953-2026", "нормативная база изделия", "проект, закупка"],
-  ["Сертификат соответствия", "РОСС RU.32001.04ИБФ1", "соответствие требованиям", "допуск в тендер"],
-  ["Протокол испытаний", "№90237-ПРГ/26", "фактические показатели", "техническое обоснование"],
-  ["Техкарта виброукладки", "GLS400/GLS500 + X-Bond", "порядок монтажа", "ППР и подрядчик"],
-  ["Паспорт качества партии", "на каждую поставку", "входной контроль", "приёмка материала"],
-];
-
 function App() {
-  const [menu, setMenu] = useState(false);
-  const [sent, setSent] = useState(false);
+  return <main className="prototype">
+    <section className="scene hero-edit" data-node-id="22:454">
+      <img className="psl" src={`${A}edit-psl.svg`} alt="PSL" />
+      <div className="hex-pattern" />
+      <div className="hero-mark"><img src={`${A}edit-logo.svg`} alt="" /><div><b>FIXTILE<br/>MATRIX</b><span>Промышленная плиточная система</span></div></div>
+      <div className="hero-dark" />
+      <img className="hero-tile hero-tile--one" src={`${A}edit-hero-tile.png`} alt="Плитка FIXTILE MATRIX" />
+      <img className="hero-tile hero-tile--two" src={`${A}edit-hero-tile.png`} alt="" />
+      <div className="hero-metrics">{[["25 лет","проектный срок службы системы"],["0,02%","водопоглощение керамики"],["ULA / HA","химическая стойкость"],["РФ","производство и тендерная поддержка"]].map(x=><article key={x[0]}><b>{x[0]}</b><span>{x[1]}</span></article>)}</div>
+    </section>
 
-  const submit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setSent(true);
-  };
+    <section className="scene specs-scene" data-node-id="73:505">
+      <h2 className="center-title">Технические характеристики</h2>
+      <DataTable className="spec-table" icons headers={["","","ГОСТ и ТУ","FIXTILE MATRIX","",""]} rows={specs.map(r=>["",...r])} />
+    </section>
 
-  return (
-    <main>
-      <section className="hero" id="top">
-        <nav className="nav shell">
-          <a className="brand" href="#top" aria-label="FIXTILE MATRIX">
-            <b>M</b><span>FIXTILE MATRIX</span>
-          </a>
-          <button className="menu-toggle" onClick={() => setMenu(!menu)} aria-expanded={menu}>
-            {menu ? "Закрыть" : "Меню"}
-          </button>
-          <div className={`nav__links ${menu ? "nav__links--open" : ""}`}>
-            <a href="#product">Продукт</a>
-            <a href="#specs">Характеристики</a>
-            <a href="#installation">Система укладки</a>
-            <a href="#documents">Документы</a>
-            <a className="button button--small" href="#request">Рассчитать проект</a>
-          </div>
-        </nav>
+    <section className="scene detail-scene" data-node-id="105:89">
+      <h2>ХИМСТОЙКОСТЬ И САНИТАРНАЯ<br/>ЭКСПЛУАТАЦИЯ</h2>
+      <p className="lead">В промышленных каталогах химическая устойчивость, влажность, противоскольжение и очистка подаются вместе: это единый эксплуатационный сценарий пищевых, химических и фармацевтических зон.</p>
+      <div className="chem-grid">
+        <DataTable className="chem-table" icons headers={["Эксплуатационная среда","Проверяемый риск","MATRIX-решение","Результат для объекта"]} rows={chemical} />
+        <aside><h3>Почему это важно<br/>для главного инженера</h3>{["Химия не должна уходить под плитку и разрушать основание.","Шов и плитка работают как часть единой химстойкой системы.","Мойка, жиры и вода — штатный режим, а не аварийная нагрузка.","Технические свойства должны быть проверяемы в проекте и тендере."].map((x,i)=><p key={x}><b>0{i+1}</b>{x}</p>)}</aside>
+      </div>
+      <div className="application-cards">{[["Пищевая промышленность","мойка, жиры, кислоты, HACCP-контур"],["Химические зоны","реагенты, щёлочи, дезинфектанты"],["Фармацевтика","чистота, контроль загрязнений, стабильность"],["Логистика и склады","погрузчики, холодные зоны, абразив"]].map((x,i)=><article key={x[0]}><img src={`${A}app-0${i+1}.svg`} alt="" /><div><b>{x[0]}</b><span>{x[1]}</span></div></article>)}</div>
+    </section>
 
-        <div className="hero__content shell">
-          <div className="hero__copy">
-            <div className="eyebrow eyebrow--light"><span />РОССИЙСКАЯ ПРОМЫШЛЕННАЯ ПЛИТКА</div>
-            <h1>FIXTILE MATRIX — монолитная система защиты промышленных полов</h1>
-            <p>Кислотоупорная керамическая плитка + виброукладка в эпоксидную смолу.</p>
-            <div className="actions">
-              <a className="button" href="#documents">Получить каталог PDF</a>
-              <a className="button button--ghost" href="#request">Рассчитать проект</a>
-              <a className="text-link" href="#formats">Запросить образец ↗</a>
-            </div>
-          </div>
-          <div className="hero__visual" aria-label="Система плитки MATRIX">
-            <div className="hero__badge">ВИБРОУКЛАДКА MATRIX</div>
-            <div className="hex-field" aria-hidden="true">
-              {Array.from({ length: 30 }).map((_, i) => <i key={i} />)}
-            </div>
-            <div className="visual-stat"><b>0,02%</b><span>водопоглощение промышленной керамики</span></div>
-          </div>
-        </div>
+    <section className="scene palette-scene" data-node-id="15:157">
+      <h2>Цвет как инструмент<br/>промышленного зонирования</h2>
+      <p className="lead">Палитра помогает разделять потоки сырья, персонала, мойки, готовой продукции и технических зон прямо на поверхности пола.</p>
+      <div className="table-shell palette-table"><table><thead><tr>{["Цвет","Код","Визуал","Применение","Технический смысл"].map(x=><th key={x}>{x}</th>)}</tr></thead><tbody>{palette.map(r=><tr key={r[0]}><td><b>{r[0]}</b></td><td><b>{r[1]}</b></td><td><i style={{background:r[2]}}/></td><td>{r[3]}</td><td>{r[4]}</td></tr>)}</tbody></table></div>
+      <div className="palette-note"><img src={`${A}palette.svg`} alt="" />Цветовая палитра MATRIX используется как инструмент зонирования: AW + SG + TR для пищевых производств; AN + AS для складов и маршрутов движения.</div>
+    </section>
 
-        <div className="metrics shell">
-          <article><b>15 мм</b><span>типовая толщина</span></article>
-          <article><b>0,02%</b><span>водопоглощение керамики</span></article>
-          <article><b>ULA / HA</b><span>химическая стойкость</span></article>
-          <article><b>РФ</b><span>производство и поддержка</span></article>
-        </div>
-      </section>
+    <section className="scene hex-scene" data-node-id="22:64">
+      <div className="hex-word">FIXTILE<br/>MATRIX<br/>HEX</div>
+      <div className="hex-size">125<br/>×<br/>108</div>
+      <img src={`${A}edit-hex-tile.png`} className="hex-product" alt="FIXTILE MATRIX HEX" />
+      <div className="shape-switch"><button>▰</button><button>⬢</button><button>■</button></div>
+    </section>
 
-      <section className="section philosophy" id="product">
-        <div className="shell">
-          <SectionHead
-            number="02"
-            label="ФИЛОСОФИЯ ПРОДУКТА"
-            title="Не просто плитка, а инженерная система"
-            intro="FIXTILE MATRIX — это монолитная химически стойкая система защиты промышленного пола. Плитка работает вместе с эпоксидной посадкой, армированием, затиркой и технологией виброукладки."
-          />
-          <div className="philosophy__grid">
-            <div className="layer-card">
-              <div className="layer-card__top"><span>MATRIX SYSTEM</span><b>04</b></div>
-              {["Кислотоупорная керамическая плитка", "Эпоксидная посадка без пустот", "Армирование и системные компоненты", "Подготовленное бетонное основание"].map((item, i) => (
-                <div className="layer-row" key={item}><span>0{i + 1}</span>{item}</div>
-              ))}
-            </div>
-            <img src={`${A}figma-04.png`} alt="Слои промышленного пола FIXTILE MATRIX" />
-          </div>
-          <div className="card-row">
-            {philosophy.map(([num, title, text]) => (
-              <article className="info-card" key={num}><b>{num}</b><div><h3>{title}</h3><p>{text}</p></div></article>
-            ))}
-          </div>
-        </div>
-      </section>
+    <section className="scene standard-scene" data-node-id="105:155">
+      <h2>НОРМАТИВНАЯ КАРТА<br/>ТЕХНИЧЕСКИХ ХАРАКТЕРИСТИК</h2>
+      <p className="lead">Блок можно использовать как «доказательную» секцию: каждая характеристика привязана к норме, методу испытаний или проектной логике приёмки материала.</p>
+      <DataTable className="standard-table" headers={["Группа требований","Норма / метод","Что проверяет","Данные MATRIX","Куда вставлять"]} rows={standards} />
+      <div className="conclusion"><b>◎ &nbsp; Итоговая идея блока</b><span>FIXTILE MATRIX нужно подавать не как «ещё одну плитку», а как промышленную систему с проверяемым запасом: материал + химстойкая укладка + документы + применимость.</span></div>
+    </section>
 
-      <section className="section section--muted" id="specs">
-        <div className="shell">
-          <SectionHead number="03" label="ТЕХНИЧЕСКИЕ ХАРАКТЕРИСТИКИ" title="Технические характеристики" />
-          <div className="table-wrap">
-            <table className="spec-table">
-              <thead><tr><th>Показатель</th><th>НД / норма</th><th>Испытания</th><th>Технический эффект</th></tr></thead>
-              <tbody>{specs.map((row) => <tr key={row[0]}>{row.map((cell, i) => <td className={i === 2 ? "tested" : ""} key={cell}>{cell}</td>)}</tr>)}</tbody>
-            </table>
-          </div>
-          <p className="proof-note">Полученные фактические значения подтверждают запас к нормативным требованиям и применимость системы в промышленной эксплуатации.</p>
-        </div>
-      </section>
+    <section className="scene geometry-scene" data-node-id="22:333">
+      <div className="split-head"><h2>ГЕОМЕТРИЯ</h2><p>Геометрия FixTile MATRIX упрощает процесс укладки. Благодаря трапециевидной форме плитка самостоятельно формирует одинаковый шов, сокращая время монтажа и уменьшая вероятность ошибок на объекте.</p></div>
+      <img className="geometry-left" src={`${A}edit-geometry-left.png`} alt="" />
+      <div className="geometry-points">{[["01","Геометрия формирует одинаковый шов."],["02","Ускоряет монтаж и снижает риск ошибок."],["03","Обеспечивает стабильную геометрию и экономию материалов."]].map(x=><article key={x[0]}><b>{x[0]}</b><i/><p>{x[1]}</p></article>)}</div>
+      <img className="geometry-row" src={`${A}edit-geometry-row.png`} alt="Геометрия плитки" />
+    </section>
 
-      <section className="section installation" id="installation">
-        <div className="shell">
-          <SectionHead number="06" label="СИСТЕМА УКЛАДКИ" title="Пирог промышленного пола" />
-          <div className="installation__main">
-            <div className="steps">
-              {install.map(([num, title, text]) => <article key={num}><b>{num}</b><h3>{title}</h3><p>{text}</p></article>)}
-            </div>
-            <img src={`${A}figma-04.png`} alt="Схема слоёв пола" />
-          </div>
-          <div className="green-note">FixTile X-Bond — щелочестойкая стеклотканевая армирующая сетка: формирует монолитную армированную мембрану и повышает трещиностойкость.</div>
-        </div>
-      </section>
+    <section className="scene systems-scene" data-node-id="22:113">
+      <div className="split-head"><p>FixTile MATRIX применяется в нескольких системах, что позволяет подобрать оптимальное решение для объекта</p><h2>СИСТЕМНОСТЬ</h2></div>
+      <div className="systems"><article><h3>СИСТЕМА<br/>CLASSIC <em>AGGRESSIVE</em></h3><img src={`${A}edit-system-classic.png`} alt="Система Classic Aggressive"/><b>ЦЕНА ЗА М² <em>9 785 ₽</em></b></article><article><h3>СИСТЕМА<br/>PRO <em>AGGRESSIVE</em></h3><img src={`${A}edit-system-pro.png`} alt="Система Pro Aggressive"/><b>ЦЕНА ЗА М² <em>7 764 ₽</em></b></article></div>
+    </section>
 
-      <section className="section section--muted docs" id="documents">
-        <div className="shell">
-          <SectionHead
-            number="07"
-            label="ЦЕНТР ЗАГРУЗКИ ДОКУМЕНТАЦИИ"
-            title="Документы для проекта, закупки и тендера"
-            intro="Техкарты, сертификат соответствия и протокол испытаний можно использовать как основу для спецификации, проектной документации и закупочного обоснования."
-          />
-          <div className="doc-grid">
-            {documents.map(([title, desc]) => (
-              <a href="#request" className="doc-card" key={title}><span>PDF</span><b>{title}</b><p>{desc}</p><i>↓</i></a>
-            ))}
-          </div>
-          <div className="green-note">Документы собраны как комплект для проектировщика, снабжения и тендерной комиссии.</div>
-        </div>
-      </section>
+    <section className="scene monolith-scene" data-node-id="22:267">
+      <img src={`${A}edit-monolith.png`} alt="Монолитная система FIXTILE MATRIX"/>
+      <h2><em>ПОЛНОСТЬЮ</em><span>МОНОЛИТНАЯ</span>СИСТЕМА</h2>
+    </section>
 
-      <section className="section tender">
-        <div className="shell">
-          <SectionHead number="08" label="ТЕНДЕРНАЯ ЗАЩИТА И СЕРТИФИКАЦИЯ" title="Аргументы, которые проходят через проектировщика и закупку" />
-          <img className="tender__shoe" src={`${A}figma-01.png`} alt="" />
-          <div className="table-wrap">
-            <table className="tender-table">
-              <thead><tr><th>Документ</th><th>Номер / статус</th><th>Что подтверждает</th><th>Где используется</th></tr></thead>
-              <tbody>{tenderRows.map((row) => <tr key={row[0]}>{row.map((cell) => <td key={cell}>{cell}</td>)}</tr>)}</tbody>
-            </table>
-          </div>
-          <div className="tender-metrics">
-            {[["0,02%", "водопоглощение"], ["40 МПа", "прочность на изгиб"], ["115 Бк/кг", "радиационная безопасность"], ["25 лет", "проектный ресурс"]].map(([v, l]) => <article key={v}><b>{v}</b><span>{l}</span></article>)}
-          </div>
-        </div>
-      </section>
+    <section className="scene engineering-scene" data-node-id="73:485">
+      <div className="split-head"><h2>ИНЖЕНЕРНАЯ<br/>СИСТЕМА</h2><p>FIXTILE MATRIX — это монолитная химически стойкая система защиты промышленного пола. Плитка работает не отдельно, а вместе с эпоксидной посадкой, армированием, затиркой и технологией виброукладки.</p></div>
+      <img src={`${A}edit-engineering.png`} alt="Применение FIXTILE MATRIX на объектах"/>
+    </section>
 
-      <section className="request" id="request">
-        <div className="request__background" />
-        <div className="shell request__grid">
-          <div>
-            <div className="eyebrow eyebrow--light"><span />РАЗДЕЛ 09 / ЗАЯВКА И РАСЧЁТ</div>
-            <h2>Нужен расчёт промышленного пола?</h2>
-            <p>Отправьте параметры объекта — подготовим подбор системы, спецификацию и комплект документов для тендера.</p>
-            <a className="button button--ghost" href="#documents">Скачать каталог</a>
-          </div>
-          <form onSubmit={submit}>
-            <h3>{sent ? "Заявка подготовлена" : "Параметры для расчёта"}</h3>
-            {sent ? <p className="success">Спасибо! Форма работает как демонстрационный прототип. Подключите корпоративный обработчик для отправки данных.</p> : <>
-              <label>Тип производства<input required name="industry" placeholder="Например, пищевая промышленность" /></label>
-              <label>Площадь пола, м²<input required type="number" name="area" placeholder="1500" /></label>
-              <label>Агрессивные среды<input name="environment" placeholder="Кислоты, щёлочи, влажность" /></label>
-              <label>Сроки проекта<input name="timeline" placeholder="III квартал 2026" /></label>
-              <button className="button" type="submit">Получить расчёт</button>
-            </>}
-          </form>
-        </div>
-      </section>
-
-      <section className="section formats" id="formats">
-        <div className="shell split-heading">
-          <h2>ФОРМАТЫ</h2>
-          <p>Коллекция Fixtile MATRIX выпускается в трёх форматах: прямоугольном, квадратном и шестигранном.<br /><br />Такой набор форм позволяет адаптировать укладку под геометрию помещения.</p>
-        </div>
-        <div className="shell format-grid">
-          {[
-            ["ПРЯМОУГОЛЬНАЯ", "200 × 100", "figma-14.png"],
-            ["ШЕСТИГРАННАЯ", "125 × 108", "figma-05.png"],
-            ["КВАДРАТНАЯ", "200 × 200", "figma-19.png"],
-          ].map(([name, size, image]) => <article key={name}><img src={`${A}${image}`} alt={`${name} плитка`} /><h3>{name}</h3><p>{size}</p><span /></article>)}
-        </div>
-      </section>
-
-      <section className="section geometry">
-        <div className="shell split-heading">
-          <h2>ГЕОМЕТРИЯ</h2>
-          <p>Геометрия FixTile MATRIX упрощает процесс укладки. Благодаря трапециевидной форме плитка самостоятельно формирует одинаковый шов, сокращая время монтажа и уменьшая вероятность ошибок на объекте.</p>
-        </div>
-        <div className="shell geometry__grid">
-          <div className="geometry__points">
-            {[["01", "Формирует одинаковый шов."], ["02", "Ускоряет монтаж и снижает риск ошибок."], ["03", "Обеспечивает стабильную геометрию."]].map(([n, t]) => <article key={n}><b>{n}</b><p>{t}</p></article>)}
-          </div>
-          <div className="geometry__visual"><img src={`${A}figma-06.png`} alt="Трапециевидная геометрия плитки" /><img src={`${A}figma-09.png`} alt="Ровный шов между плитками" /></div>
-        </div>
-      </section>
-
-      <footer><div className="shell"><a className="brand" href="#top"><b>M</b><span>FIXTILE MATRIX</span></a><p>Инженерная система защиты промышленных полов</p><a href="#top">Наверх ↑</a></div></footer>
-    </main>
-  );
+    <section className="scene safety-scene" data-node-id="22:318">
+      <div className="split-head"><p>Fixtile MATRIX выпускается только с классами противоскольжения R11 и R12 — это осознанное решение в пользу безопасности эксплуатации.</p><h2>ПОВЕРХНОСТЬ И<br/>БЕЗОПАСНОСТЬ</h2></div>
+      <h3>Поверхность плитки имеет микротекстуру промышленного назначения и относится к типу UGL (through-body).</h3>
+      <div className="safety-visual"><span/><img className="safety-tile" src={`${A}edit-surface-tile.png`} alt="Плитка"/><img className="shoe" src={`${A}edit-shoe.png`} alt="Противоскользящая поверхность"/></div>
+    </section>
+  </main>;
 }
 
 createRoot(document.getElementById("root")!).render(<App />);
