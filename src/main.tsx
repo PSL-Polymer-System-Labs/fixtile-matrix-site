@@ -198,7 +198,12 @@ function App() {
     <section className="scene safety-scene" data-node-id="22:318">
       <div className="split-head"><p>Fixtile MATRIX выпускается только с классами противоскольжения R11 и R12 — это осознанное решение в пользу безопасности эксплуатации.</p><h2>ПОВЕРХНОСТЬ И<br/>БЕЗОПАСНОСТЬ</h2></div>
       <h3>Поверхность плитки имеет микротекстуру промышленного назначения и относится к типу UGL (through-body).</h3>
-      <div className="safety-visual"><span/><img className="safety-tile" src={`${A}edit-surface-tile.png`} alt="Плитка"/><img className="shoe" src={`${A}edit-shoe.png`} alt="Противоскользящая поверхность"/></div>
+      <div className="slip-meter">
+        <article><i className="slip-ramp slip-ramp--r11"/><div><b>R11</b><span>&gt;19°–27°</span><small>рабочие и производственные зоны</small></div></article>
+        <article><i className="slip-ramp slip-ramp--r12"/><div><b>R12</b><span>&gt;27°–35°</span><small>зоны повышенного риска скольжения</small></div></article>
+        <p>DIN EN 16165 · испытание в рабочей обуви на наклонной плоскости</p>
+      </div>
+      <div className="safety-visual"><span/><img className="safety-tile" src={`${A}edit-surface-tile.png`} alt="Промышленная плитка FIXTILE MATRIX"/><img className="work-boot" src={`${A}industrial-work-boot.png`} alt="Промышленный защитный ботинок с противоскользящим протектором"/></div>
     </section>
   </main>;
 }
