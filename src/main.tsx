@@ -2,7 +2,7 @@ import { FormEvent, useState } from "react";
 import { createRoot } from "react-dom/client";
 import "./styles.css";
 
-const A = "/assets/";
+const A = `${import.meta.env.BASE_URL}assets/`;
 
 type SectionHeadProps = {
   number: string;
