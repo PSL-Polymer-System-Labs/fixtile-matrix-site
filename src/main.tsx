@@ -47,6 +47,35 @@ const standards = [
   ["Документы поставки", "ТУ, сертификат, протокол", "проверяемость партии и поставщика", "российская юрисдикция", "44-ФЗ / 223-ФЗ / закупка"],
 ];
 
+const engineeringApplications = [
+  ["food", "пищевое производство"],
+  ["dairy", "молочное производство"],
+  ["catering", "общественное питание"],
+  ["education", "образовательные учреждения"],
+  ["office", "офисные помещения"],
+  ["retail", "места продаж"],
+  ["healthcare", "учреждения здравоохранения"],
+  ["auto", "автоиндустрия"],
+  ["parking", "паркинги"],
+  ["warehouse", "склады"],
+];
+
+function ApplicationIcon({ kind }: { kind: string }) {
+  const common = { fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
+  return <svg viewBox="0 0 24 24" aria-hidden="true">
+    {kind === "food" && <><circle {...common} cx="7.5" cy="15.5" r="4.5"/><path {...common} d="M5.5 11c-.4-2.6 1-4.5 3-5.2m.6 2.8 1.8 3M14 3h4.5l-.8 3.8 2.3 3.7V21h-8V10.5l2.4-3.7L14 3Z"/></>}
+    {kind === "dairy" && <><path {...common} d="M5 8c2.5 0 4.5-1.8 5.2-4M19 8c-2.5 0-4.5-1.8-5.2-4M7 8.5 4 12l3 2 1 6h8l1-6 3-2-3-3.5c-3-2.6-7-2.6-10 0Z"/><circle cx="9.5" cy="12" r=".8" fill="currentColor"/><circle cx="14.5" cy="12" r=".8" fill="currentColor"/></>}
+    {kind === "catering" && <path {...common} d="M5 3v7m-2-7v4.5c0 2 4 2 4 0V3m-2 7v11m7-18v18m0-18c-3 3-3 7.5 0 9m5-9v8c0 2.7 4 2.7 4 0V3m-2 12v6"/>}
+    {kind === "education" && <path {...common} d="M3 7h18v8H3zM6 15v4h12v-4M4 19h16M4 7V5h16v2m-15 8-2 3 2 2"/>}
+    {kind === "office" && <><path {...common} d="M3 9h18v11H3zm0 8h18m4 3v1m14-1v1"/><circle {...common} cx="15" cy="6" r="3"/><path {...common} d="M12 11c1-2.2 5-2.2 6 0v6m-3-6v5m-3 1 3-4 3 4"/></>}
+    {kind === "retail" && <><path {...common} d="M3 5h4l2.5 11h9l2.5-7H8m2-1 4 8m5-7-4 7"/><circle {...common} cx="11" cy="20" r="1.4"/><circle {...common} cx="18" cy="20" r="1.4"/></>}
+    {kind === "healthcare" && <path {...common} d="M3 9h6V3h6v6h6v12H3zM7 13v5m-2.5-2.5h5M15 13h3m-3 4h3"/>}
+    {kind === "auto" && <path {...common} d="M7 21V3h6.5c8 0 8 10 0 10H7m0-6h6c3 0 3 4 0 4H7"/>}
+    {kind === "parking" && <><path {...common} d="M3 11 12 4l9 7v10H3zm2 4h14"/><path {...common} d="m7 18 2-4h6l2 4v2H7Z"/><circle cx="9" cy="20" r="1" fill="currentColor"/><circle cx="15" cy="20" r="1" fill="currentColor"/></>}
+    {kind === "warehouse" && <path {...common} d="M3 21V10l9-7 9 7v11zm0-7h18M8 14v7m8-7v7M4 20l5-5m-5 0 5 5m2-11h3v3h-3z"/>}
+  </svg>;
+}
+
 function DataTable({ headers, rows, icons = false, className = "" }: { headers: string[]; rows: string[][]; icons?: boolean; className?: string }) {
   return <div className={`table-shell ${className}`}><table><thead><tr>{headers.map(h => <th key={h}>{h}</th>)}</tr></thead><tbody>{rows.map((r, i) => <tr key={r[0]}>{r.map((c, j) => <td key={j}>{icons && j === 0 && <img className="row-icon" src={`${A}${className.startsWith("spec") ? "spec" : "chem"}-${String(i + 1).padStart(2, "0")}.svg`} alt="" />}{c}</td>)}</tr>)}</tbody></table></div>;
 }
@@ -118,9 +147,12 @@ function App() {
 
     <section className="scene engineering-scene" data-node-id="73:485">
       <div className="split-head"><h2>ИНЖЕНЕРНАЯ<br/>СИСТЕМА</h2><p>FIXTILE MATRIX — это монолитная химически стойкая система защиты промышленного пола. Плитка работает не отдельно, а вместе с эпоксидной посадкой, армированием, затиркой и технологией виброукладки.</p></div>
-      <div className="engineering-visual">
-        <img src={`${A}edit-engineering.png`} alt="Применение FIXTILE MATRIX на объектах"/>
-        <span>паркинги</span>
+      <div className="engineering-cards">
+        <article className="engineering-card engineering-card--title">ПРИМЕНЕНИЕ<br/>НА ОБЪЕКТАХ</article>
+        {engineeringApplications.map(([kind, label]) => <article className="engineering-card" key={kind}>
+          <ApplicationIcon kind={kind}/>
+          <span>{label}</span>
+        </article>)}
       </div>
     </section>
 
