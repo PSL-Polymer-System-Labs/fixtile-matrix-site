@@ -112,7 +112,7 @@ function ApplicationIcon({ kind }: { kind: string }) {
 }
 
 function DataTable({ headers, rows, icons = false, className = "" }: { headers: string[]; rows: string[][]; icons?: boolean; className?: string }) {
-  return <div className={`table-shell ${className}`}><table><thead><tr>{headers.map(h => <th key={h}>{h}</th>)}</tr></thead><tbody>{rows.map((r, i) => <tr key={r[0]}>{r.map((c, j) => <td key={j}>{icons && j === 0 && <img className="row-icon" src={`${A}${className.startsWith("spec") ? "spec" : "chem"}-${String(i + 1).padStart(2, "0")}.svg`} alt="" />}{c}</td>)}</tr>)}</tbody></table></div>;
+  return <div className={`table-shell ${className}`}><table><thead><tr>{headers.map((h, i) => <th key={`${h}-${i}`}>{h}</th>)}</tr></thead><tbody>{rows.map((r, i) => <tr key={r[0]}>{r.map((c, j) => <td key={j} data-label={headers[j]}><span className="cell-content">{icons && j === 0 && <img className="row-icon" src={`${A}${className.startsWith("spec") ? "spec" : "chem"}-${String(i + 1).padStart(2, "0")}.svg`} alt="" />}{c}</span></td>)}</tr>)}</tbody></table></div>;
 }
 
 function App() {
@@ -145,7 +145,7 @@ function App() {
     <section className="scene palette-scene" data-node-id="15:157">
       <h2>Цвет как инструмент<br/>промышленного зонирования</h2>
       <p className="lead">Палитра помогает разделять потоки сырья, персонала, мойки, готовой продукции и технических зон прямо на поверхности пола.</p>
-      <div className="table-shell palette-table"><table><thead><tr>{["Цвет","Код","Визуал","Применение","Технический смысл"].map(x=><th key={x}>{x}</th>)}</tr></thead><tbody>{palette.map(r=><tr key={r[0]}><td><b>{r[0]}</b></td><td><b>{r[1]}</b></td><td><i style={{background:r[2]}}/></td><td>{r[3]}</td><td>{r[4]}</td></tr>)}</tbody></table></div>
+      <div className="table-shell palette-table"><table><thead><tr>{["Цвет","Код","Визуал","Применение","Технический смысл"].map(x=><th key={x}>{x}</th>)}</tr></thead><tbody>{palette.map(r=><tr key={r[0]}><td data-label="Цвет"><span className="cell-content"><b>{r[0]}</b></span></td><td data-label="Код"><span className="cell-content"><b>{r[1]}</b></span></td><td data-label="Визуал"><span className="cell-content"><i style={{background:r[2]}}/></span></td><td data-label="Применение"><span className="cell-content">{r[3]}</span></td><td data-label="Технический смысл"><span className="cell-content">{r[4]}</span></td></tr>)}</tbody></table></div>
       <div className="palette-note"><img src={`${A}palette.svg`} alt="" />Цветовая палитра MATRIX используется как инструмент зонирования: AW + SG + TR для пищевых производств; AN + AS для складов и маршрутов движения.</div>
     </section>
 
