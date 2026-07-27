@@ -60,6 +60,41 @@ const engineeringApplications = [
   ["warehouse", "склады"],
 ];
 
+const classicLayers = [
+  "Плитка Fixtile Matrix",
+  "Затирка Fixtile SE",
+  "Клей Fixtile GLS700",
+  "Гидроизоляция Fixtile SPU",
+  "Сетка Fixtile X-Bond",
+  "Грунтовка Fixtile GLS100",
+  "Герметик литьевой Fixtile EGL",
+  "Бетон",
+];
+
+const proLayers = [
+  "Плитка Fixtile Matrix",
+  "Затирка Fixtile GLS500",
+  "Сетка Fixtile X-Bond",
+  "Кварцевый песок",
+  "Клей Fixtile GLS400",
+  "Грунтовка Fixtile GLS100",
+  "Герметик литьевой Fixtile EGL",
+  "Бетон",
+];
+
+const layerPositions = [15, 23, 48, 57, 69, 77, 86, 94];
+
+function SystemLayers({ image, alt, layers }: { image: string; alt: string; layers: string[] }) {
+  return <div className="system-stack">
+    <img src={image} alt={alt}/>
+    <ol className="layer-callouts">
+      {layers.map((name, index) => <li key={name} style={{"--layer-y": `${layerPositions[index]}%`} as React.CSSProperties}>
+        <span>{name}</span><em>от 0 000 ₽*</em>
+      </li>)}
+    </ol>
+  </div>;
+}
+
 function ApplicationIcon({ kind }: { kind: string }) {
   const common = { fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
   return <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -137,7 +172,10 @@ function App() {
 
     <section className="scene systems-scene" data-node-id="22:113">
       <div className="split-head"><p>FixTile MATRIX применяется в нескольких системах, что позволяет подобрать оптимальное решение для объекта</p><h2>СИСТЕМНОСТЬ</h2></div>
-      <div className="systems"><article><h3>СИСТЕМА<br/>CLASSIC <em>AGGRESSIVE</em></h3><img src={`${A}edit-system-classic.png`} alt="Система Classic Aggressive"/><b>ЦЕНА ЗА М² <em>от 9 785 ₽*</em></b></article><article><h3>СИСТЕМА<br/>PRO <em>AGGRESSIVE</em></h3><img src={`${A}edit-system-pro.png`} alt="Система Pro Aggressive"/><b>ЦЕНА ЗА М² <em>от 7 764 ₽*</em></b></article></div>
+      <div className="systems">
+        <article><h3>СИСТЕМА<br/>CLASSIC <em>AGGRESSIVE</em></h3><SystemLayers image={`${A}edit-system-classic.png`} alt="Слои системы Classic Aggressive" layers={classicLayers}/><b>ЦЕНА ЗА М² <em>от 9 785 ₽*</em></b></article>
+        <article><h3>СИСТЕМА<br/>PRO <em>AGGRESSIVE</em></h3><SystemLayers image={`${A}edit-system-pro.png`} alt="Слои системы Pro Aggressive" layers={proLayers}/><b>ЦЕНА ЗА М² <em>от 7 764 ₽*</em></b></article>
+      </div>
       <p className="systems-price-note">* Указаны ориентировочные цены при идеальных условиях монтажа — для предварительной оценки. Точная цена с учётом всех скрытых работ и особенностей каждого объекта формируется индивидуально и указывается в приложении к договору.</p>
     </section>
 
