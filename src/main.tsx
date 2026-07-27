@@ -137,7 +137,8 @@ function App() {
 
     <section className="scene systems-scene" data-node-id="22:113">
       <div className="split-head"><p>FixTile MATRIX применяется в нескольких системах, что позволяет подобрать оптимальное решение для объекта</p><h2>СИСТЕМНОСТЬ</h2></div>
-      <div className="systems"><article><h3>СИСТЕМА<br/>CLASSIC <em>AGGRESSIVE</em></h3><img src={`${A}edit-system-classic.png`} alt="Система Classic Aggressive"/><b>ЦЕНА ЗА М² <em>9 785 ₽</em></b></article><article><h3>СИСТЕМА<br/>PRO <em>AGGRESSIVE</em></h3><img src={`${A}edit-system-pro.png`} alt="Система Pro Aggressive"/><b>ЦЕНА ЗА М² <em>7 764 ₽</em></b></article></div>
+      <div className="systems"><article><h3>СИСТЕМА<br/>CLASSIC <em>AGGRESSIVE</em></h3><img src={`${A}edit-system-classic.png`} alt="Система Classic Aggressive"/><b>ЦЕНА ЗА М² <em>от 9 785 ₽*</em></b></article><article><h3>СИСТЕМА<br/>PRO <em>AGGRESSIVE</em></h3><img src={`${A}edit-system-pro.png`} alt="Система Pro Aggressive"/><b>ЦЕНА ЗА М² <em>от 7 764 ₽*</em></b></article></div>
+      <p className="systems-price-note">* Указаны ориентировочные цены при идеальных условиях монтажа — для предварительной оценки. Точная цена с учётом всех скрытых работ и особенностей каждого объекта формируется индивидуально и указывается в приложении к договору.</p>
     </section>
 
     <section className="scene monolith-scene" data-node-id="22:267">
