@@ -160,7 +160,7 @@ function App() {
       <h2>НОРМАТИВНАЯ КАРТА<br/>ТЕХНИЧЕСКИХ ХАРАКТЕРИСТИК</h2>
       <p className="lead">Блок можно использовать как “доказательную” секцию: каждая характеристика привязана к норме, методу испытаний или проектной логике приёмки материала.</p>
       <DataTable className="standard-table" headers={["Группа требований","Норма / метод","Что проверяет","Данные MATRIX","Куда вставлять"]} rows={standards} />
-      <div className="conclusion"><b>◎ &nbsp; Итоговая идея блока</b><span>FIXTILE MATRIX нужно подавать не как “ещё одну плитку”, а как промышленную систему с проверяемым запасом: материал + химстойкая укладка + документы + применимость в конкретных производственных зонах.</span></div>
+      <div className="conclusion"><b>◎ &nbsp; Итоговая идея блока</b><span>FIXTILE MATRIX нужно подавать не как “ещё одну плитку”, а как промышленную систему с проверяемым запасом и доказанными техническими характеристиками.</span></div>
     </section>
 
     <section className="scene geometry-scene" data-node-id="22:333">
@@ -171,7 +171,7 @@ function App() {
     </section>
 
     <section className="scene systems-scene" data-node-id="22:113">
-      <div className="split-head"><p>FixTile MATRIX применяется в нескольких системах, что позволяет подобрать оптимальное решение для объекта</p><h2>СИСТЕМНОСТЬ</h2></div>
+      <div className="split-head"><p>FixTile MATRIX применяется в нескольких системах, что позволяет подобрать оптимальное решение для объекта</p><h2>ДВЕ СИСТЕМЫ</h2></div>
       <div className="systems">
         <article><h3>СИСТЕМА<br/>CLASSIC <em>AGGRESSIVE</em></h3><SystemLayers image={`${A}edit-system-classic.png`} alt="Слои системы Classic Aggressive" layers={classicLayers}/><b>ЦЕНА ЗА М² <em>от 9 785 ₽*</em></b></article>
         <article><h3>СИСТЕМА<br/>PRO <em>AGGRESSIVE</em></h3><SystemLayers image={`${A}edit-system-pro.png`} alt="Слои системы Pro Aggressive" layers={proLayers}/><b>ЦЕНА ЗА М² <em>от 7 764 ₽*</em></b></article>
